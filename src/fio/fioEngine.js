@@ -197,7 +197,7 @@ export class FioEngine extends CurrencyEngine {
   getDisplayPrivateSeed () {
     let out = ''
     if (this.walletInfo.keys && this.walletInfo.keys.fioKey) {
-      out += 'active key\n' + this.walletInfo.keys.fioKey + '\n\n' + this.walletInfo.keys.mnemonics
+      out += 'active key\n' + this.walletInfo.keys.fioKey + '\n\n ' + this.walletInfo.keys.mnemonics
     }
     return out
   }
