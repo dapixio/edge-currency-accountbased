@@ -35,7 +35,8 @@ const defaultSettings: any = {
     'https://fio.eossweden.org/v1/'
   ],
   historyNodeActions: {
-    getActions: 'get_actions'
+    getActions: 'get_actions',
+    getTransfers: 'get_transfers'
   },
   fioAddressRegApiUrl: 'https://reg.fioprotocol.io/public-api/buy-address',
   fioDomainRegUrl: 'https://reg.fioprotocol.io/domain/edge?publicKey=',
