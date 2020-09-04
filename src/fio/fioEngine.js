@@ -622,13 +622,81 @@ export class FioEngine extends CurrencyEngine {
     return res
   }
 
+  async fioRetryApiRequest(
+    apiUrl: string,
+    requestParams: {
+      endPoint: string,
+      body: string,
+      fetchOptions?: any
+    }
+  ): Promise<any> {
+    const { endPoint, body, fetchOptions } = requestParams
+    const fioSDK = new FIOSDK(
+      this.walletInfo.keys.fioKey,
+      this.walletInfo.keys.publicKey,
+      apiUrl,
+      this.fetchCors,
+      undefined,
+      this.tpid
+    )
+    let res
+
+    try {
+      res = await fioSDK.transactions.executeCall(endPoint, body, fetchOptions)
+    } catch (e) {
+      // handle FIO API error
+      if (e.errorCode && fioApiErrorCodes.indexOf(e.errorCode) > -1) {
+        res = {
+          isError: true,
+          data: {
+            code: e.errorCode,
+            message: e.message,
+            json: e.json,
+            list: e.list
+          }
+        }
+      } else {
+        this.log(
+          `FIO. fioApiRequest error. requestParams: ${JSON.stringify(
+            requestParams
+          )} - apiUrl: ${apiUrl} - message: ${e.message}`
+        )
+        throw e
+      }
+    }
+
+    return res
+  }
+
   async multicastServers(actionName: string, params?: any): Promise<any> {
     let res
     if (ACTIONS_SKIP_SWITCH[actionName]) {
-      const apiUrl = shuffleArray([
+      for (const apiUrl of shuffleArray([
         ...this.currencyInfo.defaultSettings.apiUrls
-      ])[0]
-      res = await this.fioApiRequest(apiUrl, actionName, params)
+      ])) {
+        try {
+          res = await this.fioApiRequest(apiUrl, actionName, params)
+          break
+        } catch (e) {
+          if (e.requestParams) {
+            res = await asyncWaterfall(
+              shuffleArray(
+                this.currencyInfo.defaultSettings.apiUrls.map(apiUrl => () =>
+                  this.fioRetryApiRequest(apiUrl, e.requestParams)
+                )
+              )
+            )
+            break
+          } else if (e.errorCode && [800, 801].indexOf(e.errorCode) > -1) {
+            continue
+          } else {
+            throw e
+          }
+        }
+      }
+      if (!res) {
+        throw new Error('Service is unavailable')
+      }
     } else {
       res = await asyncWaterfall(
         shuffleArray(
