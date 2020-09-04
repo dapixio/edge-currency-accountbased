@@ -646,6 +646,19 @@ export class FioEngine extends CurrencyEngine {
     } catch (e) {
       // handle FIO API error
       if (e.errorCode && fioApiErrorCodes.indexOf(e.errorCode) > -1) {
+        this.log(
+          `FIO. fioApiRequest error. requestParams: ${JSON.stringify(
+            requestParams
+          )} - apiUrl: ${apiUrl} - message: ${JSON.stringify(e.json)}`
+        )
+        if (
+          e.json &&
+          e.json.fields &&
+          e.json.fields[0] &&
+          e.json.fields[0].error
+        ) {
+          e.message = e.json.fields[0].error
+        }
         res = {
           isError: true,
           data: {
