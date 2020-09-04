@@ -7,37 +7,13 @@ import { imageServerUrl } from '../common/utils'
 
 const defaultSettings: any = {
   apiUrls: [
-    'https://fio.eu.eosamsterdam.net/v1/',
-    'https://fio.eosdac.io/v1/',
-    'http://fioapi.nodeone.io:6881/v1/',
-    'https://fio.eosphere.io/v1/',
-    'https://fio.eosrio.io/v1/',
-    'https://fio.acherontrading.com/v1/',
-    'https://fio.eos.barcelona/v1/',
-    'https://api.fio.eosdetroit.io/v1/',
-    'https://fio.zenblocks.io/v1/',
-    'https://api.fio.alohaeos.com/v1/',
-    'https://fio.greymass.com/v1/',
-    'https://fio.eosusa.news/v1/',
-    'https://fio.eosargentina.io/v1/',
-    'https://fio.cryptolions.io/v1/',
-    'https://fio-mainnet.eosblocksmith.io/v1/',
-    'https://api.fio.currencyhub.io/v1/',
-    'https://fio.eoscannon.io/v1/',
-    'https://fio.eosdublin.io/v1/',
-    'https://api.fiosweden.org/v1/',
-    'https://fio.maltablock.org/v1/'
+    'https://testnet.fioprotocol.io:443/v1/',
+    'https://chaos-proxy.azurewebsites.net/v1/'
   ],
-  historyNodeUrls: [
-    'https://fio.greymass.com/v1/',
-    'http://api.fio.eosdetroit.io/v1/',
-    'https://fio.greymass.com/v1/',
-    'https://fio.eosphere.io/v1/',
-    'https://fio.eossweden.org/v1/'
-  ],
-  fioRegApiUrl: 'https://reg.fioprotocol.io/public-api/',
-  fioDomainRegUrl: 'https://reg.fioprotocol.io/domain/',
-  fioAddressRegUrl: 'https://reg.fioprotocol.io/address/',
+  historyNodeUrls: ['https://fiotestnet.greymass.com/v1/'],
+  fioRegApiUrl: 'https://reg.az.fio.dev/public-api/',
+  fioDomainRegUrl: 'https://reg.az.fio.dev/domain/',
+  fioAddressRegUrl: 'https://reg.az.fio.dev/address/',
   defaultRef: 'edge',
   fallbackRef: 'edge',
   freeAddressRef: 'edgefree',
