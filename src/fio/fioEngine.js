@@ -18,6 +18,7 @@ import { CurrencyEngine } from '../common/engine.js'
 import { asyncWaterfall, getDenomInfo, shuffleArray } from '../common/utils'
 import {
   ACTIONS_SKIP_SWITCH,
+  ACTIONS_TO_END_POINT_KEYS,
   HISTORY_NODE_ACTIONS,
   HISTORY_NODE_OFFSET
 } from './fioConst.js'
@@ -692,6 +693,14 @@ export class FioEngine extends CurrencyEngine {
           break
         } catch (e) {
           if (e.requestParams) {
+            if (
+              EndPoint[ACTIONS_TO_END_POINT_KEYS[actionName]] &&
+              e.requestParams.endPoint.indexOf(
+                EndPoint[ACTIONS_TO_END_POINT_KEYS[actionName]]
+              ) < 0
+            ) {
+              continue
+            }
             res = await asyncWaterfall(
               shuffleArray(
                 this.currencyInfo.defaultSettings.apiUrls.map(apiUrl => () =>
@@ -703,6 +712,11 @@ export class FioEngine extends CurrencyEngine {
           } else if (e.errorCode && [800, 801].indexOf(e.errorCode) > -1) {
             continue
           } else {
+            this.log(
+              `FIO. multicastServers. actionName - ${actionName}. Error message - ${
+                e.message
+              } - ${JSON.stringify(e.json)}`
+            )
             throw e
           }
         }
@@ -721,6 +735,10 @@ export class FioEngine extends CurrencyEngine {
     }
 
     if (res.isError) {
+      if (res.data.code === 409) {
+        // duplicate trx was sent, success case
+        return {}
+      }
       const error = new FioError(res.errorMessage)
       error.json = res.data.json
       error.list = res.data.list
